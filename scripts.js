@@ -4,12 +4,63 @@
 
 /* 
  * Script Outline:
- * 1. Set up $(document).ready() with a function to load when everything is loaded.
- * 2. Load Google Viz library.
- * 3. Load data.
- * 4. Feed data to library to place result on page.
+ * (1) Set up $(document).ready() with a function to load when everything is loaded.
+ * (2) Load Google Viz library.
+ * (3) Load data.
+ * (4) Feed data to library to put chart on page.
+ * 	(a) Get data into format that library can consume. This means we need to turn the JSON into an array of arrays.
+ * 		The data I want to convert is from "observations," specifically "date" and "value"
+ * 	(b) Create for loop for this
  */
-$(document).ready(pageLoaded);
+
+
+
+//UNEMPDATA is local name of the json file that I just loaded
+function dataLoaded(UNEMPDATA){
+	//(4)(a)
+	var myObsData = UNEMPDATA.observations;
+	var myHeaders = ["Date","Unemployment"];
+	var myDataArray = [];
+	myDataArray.push(myHeaders);
+	//(4)(b)
+	for(var i=0; i<myObsData.length; i++){
+		
+		var currObj = myObsData[i];
+		var currArray = [currObj.date, Number(currObj.value)];
+		myDataArray.push(currArray);
+	
+	}//end for
+	
+	//This comes from the Google documentation at https://developers.google.com/chart/interactive/docs/gallery/linechart
+	var data = google.visualization.arrayToDataTable(myDataArray);
+	var options = {
+		title: 'Long-term Unemployment 1980-present',
+		curveType: 'function',
+		legend: { position: 'bottom' },
+		height: 550,
+		width: 1400
+		};
+	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+	chart.draw(data, options);
+
+	
+}//end dataLoaded
+
+
+
+//this is the function to call when the google viz package is loaded
+function googleLoaded(){
+	//(3) This loads the data from the json file and names the callback function
+	$.get("UEMP270V_data.json", dataLoaded, "json");
+}//end googleLoaded
+
+
+//this is the function to call when the document is ready
 function pageLoaded(){
-	console.log('page loaded');
-}
+	// (2) Load Google Viz library
+	google.load("visualization", "1", {packages:["corechart"], callback: "googleLoaded"});
+}//end pageLoaded
+
+
+//(1) Document ready w/ pageLoaded as function
+$(document).ready(pageLoaded);
