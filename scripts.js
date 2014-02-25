@@ -19,14 +19,14 @@
 function dataLoaded(UNEMPDATA){
 	//(4)(a)
 	var myObsData = UNEMPDATA.observations;
-	var myHeaders = ["Date","Unemployment"];
+	var myHeaders = ["Date","Civilians unemployed for 27 weeks or more"];
 	var myDataArray = [];
 	myDataArray.push(myHeaders);
 	//(4)(b)
 	for(var i=0; i<myObsData.length; i++){
 		
 		var currObj = myObsData[i];
-		var currArray = [currObj.date, Number(currObj.value)];
+		var currArray = [currObj.date, Number(currObj.value*1000)];
 		myDataArray.push(currArray);
 	
 	}//end for
